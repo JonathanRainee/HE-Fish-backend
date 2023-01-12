@@ -58,7 +58,7 @@ router.post('/insert-new-fish', upload.single('image'), (req, res) => {
         res.send(result)
     })
 
-    res.json(file.path)
+    // res.json(file.path)
 })
 
 // update fish

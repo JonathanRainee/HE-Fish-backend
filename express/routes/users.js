@@ -34,4 +34,14 @@ router.post('/register-user', (req, res) => {
   })
 })
 
+router.post('/login', (req, res) => {
+  const data = req.body
+
+  const q = `select * from users where username = '${data.username}' and password = '${data.password}'`
+  db.query(q, (err, result) => {
+    if(err) throw err
+    res.send(result[0])
+  })
+})
+
 module.exports = router;
