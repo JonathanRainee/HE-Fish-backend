@@ -23,6 +23,27 @@ router.get('/', function(req, res, next) {
     })
 });
 
+// get all fish attr
+router.get('/all-fish', (req, res) => {
+    
+    const q = "SELECT * FROM fishes f JOIN fish_types ft on f.fish_type_id = ft.id JOIN users u on f.user_id = u.id"
+    db.query(q, (err, result) => {
+        if(err) throw err
+        res.send(result)
+    })
+})
+
+// get specific fish type
+router.get('/fish-type/:type', (req, res) => {
+    const type = req.params.type
+    const q = `SELECT * FROM fishes f JOIN fish_types ft on f.fish_type_id = ft.id JOIN users u on f.user_id = u.id WHERE ft.name = '${type}'`
+    // res.send("asfdjasdf")
+    db.query(q, (err, result) => {
+        if(err) throw err
+        res.send(result)
+    })
+})
+
 // fish detail query
 router.get('/get-fish', (req, res) => {
     const id = req.query.id
@@ -36,7 +57,7 @@ router.get('/get-fish', (req, res) => {
 // fish detail params
 router.get('/get-fish/:id', (req, res) => {
     const id = req.params.id
-    const q = `select * from fishes where id = ${id}`
+    const q = `select * from fishes where fish_id = ${id}`
     db.query(q, (err, result) => {
         if(err) throw err
         res.send(result[0])
@@ -48,10 +69,10 @@ router.post('/insert-new-fish', upload.single('image'), (req, res) => {
     const data = req.body
     const file = req.file
 
-    const filePath = `http://10.0.2.2:3000/${file.path.replace('\\', '/')}`
+    // const filePath = `http://10.0.2.2:3000/${file.path.replace('\\', '/')}`
 
-    const q = `insert into fishes (user_id, fish_type_id, name, description, price, image_path) 
-                values (${data.userID}, ${data.fishType}, '${data.name}', '${data.desc}', ${data.price}, '${filePath}')`
+    const q = `insert into fishes (user_id, fish_type_id, fish_name, description, price, image_path) 
+                values (${data.userID}, ${data.fishType}, '${data.name}', '${data.desc}', ${data.price}, '${data.filePath}')`
     
     db.query(q, (err, result) => {
         if(err) throw err
@@ -68,7 +89,7 @@ router.put('/update-fish', upload.single('image'), (req, res) => {
 
     const filePath = `http://10.0.2.2:3000/${file.path.replace('\\', '/')}`
 
-    const q = `update fishes set fish_type_id = ${data.fishType}, name = '${data.name}', description = '${data.desc}', price = ${data.price}, image_path = '${filePath}' where id = ${data.id}`
+    const q = `update fishes set fish_type_id = ${data.fishType}, fish_name = '${data.name}', description = '${data.desc}', price = ${data.price}, image_path = '${filePath}' where fish_id = ${data.id}`
     
     db.query(q, (err, result) => {
         if(err) throw err
@@ -82,7 +103,7 @@ router.put('/update-fish', upload.single('image'), (req, res) => {
 router.delete('/delete-fish', (req, res) => {
     const data = req.body
 
-    const q = `DELETE FROM fishes WHERE id = ${data.id}`
+    const q = `DELETE FROM fishes WHERE fish_id = ${data.id}`
 
     db.query(q, (err, result) => {
         if(err) throw err
