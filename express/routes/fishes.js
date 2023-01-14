@@ -82,6 +82,19 @@ router.post('/insert-new-fish', upload.single('image'), (req, res) => {
     // res.json(file.path)
 })
 
+router.post('/update-fish-no', (req, res) => {
+    const data = req.body
+
+    const q = `UPDATE fishes SET fish_type_id = ${data.fishType}, fish_name = '${data.name}', description = '${data.desc}', price = ${data.price} WHERE fish_id = '${data.id}'`
+    
+    console.log(data)
+
+    db.query(q, (err, result) => {
+        if(err) throw err
+        res.send(result)
+    })
+})
+
 // update fish
 router.put('/update-fish', upload.single('image'), (req, res) => {
     const data = req.body
